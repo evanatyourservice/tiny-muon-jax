@@ -125,7 +125,7 @@ def muon(
         lr = learning_rate(count) if callable(learning_rate) else learning_rate
         adam_lr = adam_learning_rate(count) if callable(adam_learning_rate) else adam_learning_rate
         lr_tree = jax.tree.map(lambda _, a: adam_lr if a else lr, params, adam_layers)
-        updates = jax.tree.map(lambda p, u, lr: p - lr * u, params, updates, lr_tree)
+        updates = jax.tree.map(lambda u, lr: -lr * u, updates, lr_tree)
         return updates, MuonState(count, mu, nu)
 
     return optax.GradientTransformation(init_fn, update_fn)
